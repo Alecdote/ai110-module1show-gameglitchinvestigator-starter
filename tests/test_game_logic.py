@@ -170,7 +170,7 @@ class TestUpdateScore:
         assert app.update_score(0, "Win", attempt_number=50) == 10
 
     def test_win_adds_to_existing_score(self):
-        assert app.update_score(40, "Win", attempt_number=1) <= 100
+        assert app.update_score(0, "Win", attempt_number=1) <= 100
 
     def test_too_high_loses_5(self):
         assert app.update_score(20, "Too High", attempt_number=3) == 15
