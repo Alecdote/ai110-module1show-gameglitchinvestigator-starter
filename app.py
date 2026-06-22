@@ -35,34 +35,29 @@ def check_guess(guess, secret):
 
     try:
         if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
+            return "Too High", "📉 Go LOWER!"
         else:
-            return "Too Low", "📉 Go LOWER!"
+            return "Too Low", "📈 Go HIGHER!"
     except TypeError:
         g = str(guess)
         if g == secret:
             return "Win", "🎉 Correct!"
         if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
+            return "Too High", "📉 Go LOWER!"
+        return "Too Low", "📈 Go HIGHER!"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
-        points = 100 - 10 * (attempt_number + 1)
+        points = 100 - (10 * (attempt_number - 1))   # first-try win = 100, slower = less
         if points < 10:
-            points = 10
+            points = 10                      # floor so a late win still scores
         return current_score + points
 
-    if outcome == "Too High":
-        if attempt_number % 2 == 0:
-            return current_score + 5
-        return current_score - 5
+    if outcome in ("Too High", "Too Low"):
+        return current_score - 5             # any wrong guess: same small penalty
 
-    if outcome == "Too Low":
-        return current_score - 5
-
-    return current_score
+    return current_score                     # parse errors etc.: no change
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
@@ -135,6 +130,7 @@ if new_game:
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(1, 100)
     st.success("New game started.")
+    st.session_state.status = "playing"
     st.rerun()
 
 if st.session_state.status != "playing":
